@@ -6,3 +6,4 @@
 /docker
 .env
 package-lock.json
+logs.log

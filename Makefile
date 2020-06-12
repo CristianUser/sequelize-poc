@@ -3,7 +3,7 @@ start:
 	make start-services && make start-server
 
 start-services:
-	docker-compose up -d nginx postgres redis elasticsearch
+	docker-compose up -d postgres elasticsearch
 
 start-server:
 	cd app && npm i && npm run start:dev
@@ -20,6 +20,6 @@ burn:
 	make stop-services && make remove-containers
 
 clean-data:
-	rm -rf ./elasticsearch/data && rm -rf ./postgres/data
+	rm -rf ./docker
 
 default: start

@@ -1,9 +1,10 @@
 module.exports = {
   parserOptions: {
-    ecmaVersion: 6,
     sourceType: 'module',
+    ecmaVersion: '2017',
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
+      arrowFunctions: true
     }
   },
   plugins: ['prettier'],
@@ -20,7 +21,6 @@ module.exports = {
       }
     ],
     // best practices
-    complexity: 0, // Reconsider this in the future
     'prefer-template': 2,
     'default-case': 2,
     'guard-for-in': 2,
