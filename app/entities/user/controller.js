@@ -3,7 +3,7 @@
  * @param {import('sequelize').Model} User
  */
 module.exports = (router, User) => {
-  router.get('/', async (req, res) => {
+  router.get('/custom', async (req, res) => {
     const data = await User.findAll();
 
     res.send(data);

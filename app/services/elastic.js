@@ -16,13 +16,21 @@ function setModels(_models) {
 }
 
 /**
- *
- * @param {import('@elastic/elasticsearch').Client} _client
+ * Set elastic client instance
+ * @param {Object} _client
  */
 function setClient(_client) {
   client = _client;
 }
 
+/**
+ * Put document into elastic index
+ * @param {string} index
+ * @param {Object} opts
+ * @param {string} opts.id
+ * @param {Object} opts.data
+ * @returns {Promise}
+ */
 function index(index, { id, data }) {
   return client.index({
     id,
@@ -31,6 +39,11 @@ function index(index, { id, data }) {
   });
 }
 
+/**
+ * Resolve index name by filepath
+ * @param {string} file filepath
+ * @returns {string}
+ */
 function getIndexName(file) {
   return file
     .split('/')

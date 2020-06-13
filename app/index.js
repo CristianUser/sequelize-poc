@@ -4,11 +4,12 @@ const app = express();
 const logger = require('./services/log')({ file: __filename });
 const db = require('./config/db');
 const elastic = require('./config/elastic');
+const initialize = require('./config/files');
 
 app.use(require('cors')());
 app.use(express.json());
 db().then(dbInstance => {
-  require('./config/files')(app, dbInstance);
+  initialize(app, dbInstance);
   elastic();
 
   app.use('**', (req, res) => {
