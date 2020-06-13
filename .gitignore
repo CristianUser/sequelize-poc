@@ -3,7 +3,7 @@
 .vscode
 
 /node_modules
-/docker
+/docker/**/data
 .env
 package-lock.json
 logs.log

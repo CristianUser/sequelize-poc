@@ -20,6 +20,6 @@ burn:
 	make stop-services && make remove-containers
 
 clean-data:
-	rm -rf ./docker
+	rm -rf ./docker/**/data
 
 default: start
