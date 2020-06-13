@@ -6,7 +6,7 @@ start-services:
 	docker-compose up -d postgres elasticsearch
 
 start-server:
-	cd app && npm i && npm run start:dev
+	cd app && npm i && npm run check-elastic && npm run start:dev
 
 stop-services:
 	docker-compose stop postgres elasticsearch

@@ -3,7 +3,7 @@ services:
 
   ################################################
   ## Local Sites Setup:                         ##
-  ## Postgres, Elastic Search, Redis            ##
+  ## Postgres, Elastic Search                   ##
   ################################################
 
   # You know, for search

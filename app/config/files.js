@@ -2,6 +2,8 @@ const glob = require('glob');
 const path = require('path');
 const { Router } = require('express');
 
+let models;
+
 function getEntityName(file) {
   return file.split('/').reverse()[1];
 }
@@ -26,7 +28,9 @@ function loadControllers(app, models) {
 }
 
 module.exports = (app, sequelize) => {
-  const models = loadModels(sequelize);
+  models = loadModels(sequelize);
 
   loadControllers(app, models);
 };
+
+module.exports.getModels = () => models;
