@@ -1,7 +1,10 @@
 const glob = require('glob');
+const fs = require('fs');
+const YAML = require('yaml');
 const path = require('path');
 const { Router } = require('express');
 const controller = require('../services/controller');
+const log = require('../services/log')({ file: __filename });
 
 let models;
 
@@ -22,8 +25,10 @@ function getEntityName(file) {
 function loadModels(sequelize) {
   return glob.sync('app/entities/**/model.js').reduce((prev, file) => {
     const model = require(path.resolve(file))(sequelize);
+    const modelName = getEntityName(file);
 
-    prev[getEntityName(file)] = model;
+    prev[modelName] = model;
+    log.debug(`Model "${modelName}" registered`);
     return prev;
   }, {});
 }
@@ -42,6 +47,27 @@ function loadControllers(app, models) {
   });
 }
 
+function loadRelationshipsFile(models) {
+  const filepath = 'app/entities/relationships.yml';
+  const relationships = YAML.parse(fs.readFileSync(filepath, 'utf8'));
+
+  Object.keys(relationships).forEach(modelKey => {
+    const modelInfo = relationships[modelKey];
+
+    Object.keys(modelInfo).forEach(method => {
+      if (Array.isArray(modelInfo[method])) {
+        const [modelToKey, opts] = modelInfo[method];
+
+        models[modelKey][method](models[modelToKey], opts);
+      } else {
+        const modelToKey = modelInfo[method];
+
+        models[modelKey][method](models[modelToKey]);
+      }
+    });
+  });
+}
+
 /**
  * Initialize entities
  * @param {Object} app
@@ -50,6 +76,7 @@ function loadControllers(app, models) {
 module.exports = (app, sequelize) => {
   models = loadModels(sequelize);
 
+  loadRelationshipsFile(models);
   sequelize.sync({ alter: true });
 
   loadControllers(app, models);

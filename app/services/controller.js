@@ -1,22 +1,25 @@
 function createController(model) {
   return {
-    get() {
-      return model.findAll();
+    get({ query: { rows = 10, page = 1 } }) {
+      return model.findAndCountAll({
+        limit: rows,
+        offset: (page - 1) * rows
+      });
     },
-    getById(id) {
+    getById({ params: { id } }) {
       return model.findAll({ where: { id } }).then(rows => rows[0]);
     },
-    post(id, payload) {
-      return model.create(payload);
+    post({ body }) {
+      return model.create(body);
     },
-    put(id, payload) {
-      return model.update(payload, {
+    put({ params: { id }, body }) {
+      return model.update(body, {
         where: {
           id
         }
       });
     },
-    delete(id) {
+    delete({ params: { id } }) {
       return model.destroy({ where: { id } });
     }
   };
@@ -36,10 +39,14 @@ module.exports.generateDefaultRoutes = (router, model) => {
   const controller = createController(model);
 
   routes.forEach(route => {
-    router[route.method](route.param ? '/:id' : '/', async (req, res) => {
-      const data = await controller[route.func || route.method](req.params.id, req.body);
-
-      return res.json(data);
+    router[route.method](route.param ? '/:id' : '/', (req, res) => {
+      controller[route.func || route.method](req)
+        .then(data => {
+          res.json(data);
+        })
+        .catch(err => {
+          res.status(400).send(err.message);
+        });
     });
   });
 

@@ -1,19 +1,18 @@
-/**
- * @param {import('express').IRouter} router
- * @param {import('sequelize').Model} User
- */
-module.exports = (router, User) => {
-  router.get('/custom', async (req, res) => {
-    const data = await User.findAll();
+const bcrypt = require('bcrypt');
 
-    res.send(data);
+function postMiddleware(req, res, next) {
+  if (!req.body.password) next();
+  return bcrypt.genSalt(10).then(salt => {
+    bcrypt.hash(req.body.password, salt).then(hash => {
+      req.body.password = hash;
+      req.body.saltSecret = salt;
+      next();
+    });
   });
+}
 
-  router.post('/', async (req, res) => {
-    const data = await User.create(req.body);
-
-    res.send(data);
-  });
+module.exports = router => {
+  router.post('/', postMiddleware);
 
   return router;
 };
